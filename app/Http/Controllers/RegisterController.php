@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Repositories\AuthRepository;
 use App\Traits\ResponseTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class LoginController extends Controller
+class RegisterController extends Controller
 {
     use ResponseTrait;
 
@@ -17,12 +17,12 @@ class LoginController extends Controller
         $this->auth = $auth;
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
         try {
-            $data = $this->auth->login($request->all());
+            $data = $this->auth->register($request->all());
 
-            return $this->responseSuccess($data, 'Logged in successfully.');
+            return $this->responseSuccess($data, 'User registered successfully.');
         } catch (Exception $exception) {
             return $this->responseError([], $exception->getMessage());
         }
