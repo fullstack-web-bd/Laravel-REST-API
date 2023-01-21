@@ -24,5 +24,5 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::middleware('auth:api')->group(function () {
     Route::get('profile', [ProfileController::class, 'show']);
     Route::post('logout', [ProfileController::class, 'logout']);
-    Route::get('products', [ProductsController::class, 'index']);
+    Route::apiResource('products', ProductsController::class);
 });
