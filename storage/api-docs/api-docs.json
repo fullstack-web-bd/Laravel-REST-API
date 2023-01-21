@@ -63,7 +63,7 @@
                 ],
                 "summary": "Get all products for REST API",
                 "description": "Multiple status values can be provided with comma separated string",
-                "operationId": "index",
+                "operationId": "6d8ae74dcafe19c4813904d4ea9e4c57",
                 "parameters": [
                     {
                         "name": "perPage",
@@ -130,7 +130,7 @@
                 ],
                 "summary": "Create product",
                 "description": "Create product",
-                "operationId": "store",
+                "operationId": "9f0b814cd8d69075ed70d4cc79c9f417",
                 "requestBody": {
                     "description": "Product objects",
                     "required": true,
@@ -174,6 +174,157 @@
                     },
                     "400": {
                         "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get product detail",
+                "description": "Get product detail",
+                "operationId": "f6410f1810b0a90ba3d72d5b8250a27d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update product",
+                "description": "Update product",
+                "operationId": "ae6d19da91d293e4d27eeb1a67b836ba",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "description": "request method",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Product objects",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "price",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "description": "Product id",
+                                        "type": "integer",
+                                        "example": "Product id"
+                                    },
+                                    "title": {
+                                        "description": "Product title",
+                                        "type": "string",
+                                        "example": "Product title"
+                                    },
+                                    "slug": {
+                                        "description": "Product slug",
+                                        "type": "string",
+                                        "example": "product-title"
+                                    },
+                                    "price": {
+                                        "description": "Product price",
+                                        "type": "integer",
+                                        "example": "200"
+                                    },
+                                    "image": {
+                                        "description": "Product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete product",
+                "description": "Delete product",
+                "operationId": "3dda9543e42196cc1ff7b18d2c9f9357",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "Product not found"
                     }
                 },
                 "security": [

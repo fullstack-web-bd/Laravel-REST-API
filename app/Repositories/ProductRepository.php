@@ -2,11 +2,14 @@
 
 namespace App\Repositories;
 
+use Exception;
 use App\Interfaces\CrudInterface;
 use App\Interfaces\DBPreparableInterface;
 use App\Models\Product;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductRepository implements CrudInterface, DBPreparableInterface
@@ -42,7 +45,13 @@ class ProductRepository implements CrudInterface, DBPreparableInterface
 
     public function getById(int $id): ?Product
     {
-        return Product::find($id);
+        $product = Product::find($id);
+
+        if (empty($product)) {
+            throw new Exception("Product does not exist.", Response::HTTP_NOT_FOUND);
+        }
+
+        return $product;
     }
 
     public function create(array $data): ?Product
@@ -52,13 +61,44 @@ class ProductRepository implements CrudInterface, DBPreparableInterface
         return Product::create($data);
     }
 
-    public function prepareForDB(array $data): array
+    public function update(int $id, array $data): ?Product
+    {
+        $product = $this->getById($id);
+
+        $updated = $product->update($this->prepareForDB($data, $product));
+
+        if ($updated) {
+            $product = $this->getById($id);
+        }
+
+        return $product;
+    }
+
+    public function delete(int $id): ?Product
+    {
+        $product = $this->getById($id);
+
+        $this->deleteImage($product->image_url);
+
+        $deleted = $product->delete();
+
+        if (!$deleted) {
+            throw new Exception("Product could not be deleted.", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $product;
+    }
+
+    public function prepareForDB(array $data, ?Product $product = null): array
     {
         if (empty($data['slug'])) {
             $data['slug'] = $this->createUniqueSlug($data['title']);
         }
 
         if (!empty($data['image'])) {
+            if (!is_null($product)) {
+                $this->deleteImage($product->image_url);
+            }
             $data['image'] = $this->uploadImage($data['image']);
         }
 
@@ -79,5 +119,16 @@ class ProductRepository implements CrudInterface, DBPreparableInterface
         $image->storePubliclyAs('public', $imageName);
 
         return $imageName;
+    }
+
+    private function deleteImage(?string $imageUrl): void
+    {
+        if(!empty($imageUrl)) {
+            $imageName = ltrim(strstr($imageUrl, 'storage/'), 'storage/');
+
+            if(!empty($imageName) && Storage::exists('public/' . $imageName)) {
+                Storage::delete('public/' . $imageName);
+            }
+        }
     }
 }
